@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"log"
+	"time"
 )
 
 var pool *redis.Pool
@@ -78,7 +79,7 @@ func singConnectRedis() {
 	fmt.Println("hget names redis: ", r)
 
 	//exipre
-	_, err = c.Do("expire", "names", 5)
+	_, err = c.Do("EXPIRE", "names", 5)
 	if err != nil {
 		fmt.Println("expire err: ", err)
 		return
@@ -103,8 +104,83 @@ func singConnectRedis() {
 	//fmt.Printf("v:%v,err:%v\n", v, err)
 }
 
+func setAndExpire() {
+	c, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("Connect to redis error", err)
+		return
+	}
+	defer c.Close()
+
+	_, err = c.Do("SET", "mykey", "superWang", "EX", "5")
+	if err != nil {
+		fmt.Println("redis set failed:", err)
+	}
+
+	username, err := redis.String(c.Do("GET", "mykey"))
+	if err != nil {
+		fmt.Println("redis get failed:", err)
+	} else {
+		fmt.Printf("Get mykey: %v \n", username)
+	}
+
+	time.Sleep(8 * time.Second)
+
+	username, err = redis.String(c.Do("GET", "mykey"))
+	if err != nil {
+		fmt.Println("redis get failed:", err)
+	} else {
+		fmt.Printf("Get mykey: %v \n", username)
+	}
+
+	is_key_exist, err := redis.Bool(c.Do("EXISTS", "mykey1"))
+	if err != nil {
+		fmt.Println("not exist, err:", err)
+	} else {
+		fmt.Println("exists or not:%v.", is_key_exist)
+	}
+
+	_, err = c.Do("DEL", "mykey")
+	if err != nil {
+		fmt.Println("redis delete failed.", err)
+	}
+}
+
+func lpush_lrange_Demo() {
+	c, err := redis.Dial("tcp", "127.0.0.1:6379")
+	if err != nil {
+		fmt.Println("connect to redis error:", err)
+		return
+	}
+	defer c.Close()
+
+	_, err = c.Do("LPUSH", "runoobkey", "redis")
+	if err != nil {
+		fmt.Println("redis lpush failed", err)
+	}
+
+	_, err = c.Do("LPUSH", "runoobkey", "mongdb")
+	if err != nil {
+		fmt.Println("redis lpush failed", err)
+	}
+
+	_, err = c.Do("LPUSH", "runoobkey", "mysql")
+	if err != nil {
+		fmt.Println("redis lpush failed", err)
+	}
+
+	values, _ := redis.Values(c.Do("LRANGE", "runoobkey", "0", "100"))
+	fmt.Println("------> lrange: ")
+	for _, v := range values {
+		fmt.Println(string(v.([]byte)))
+	}
+}
+
 func main() {
+	lpush_lrange_Demo()
 	connPool()
 	log.Println("not run here...???")
 	singConnectRedis()
+	setAndExpire()
+
 }
