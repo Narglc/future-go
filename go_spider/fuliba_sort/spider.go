@@ -2,17 +2,14 @@ package fuliba_sort
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"regexp"
-	"strconv"
+	"time"
 )
 
 var Client http.Client
 
-func Spider(url string, hdr map[string]string, cks []http.Cookie) (int, string) {
+func GetResponse(url string, hdr map[string]string, cks []http.Cookie) *http.Response {
 	fmt.Println(url)
 	req, err := http.NewRequest("GET", url, nil) //或直接使用htt.Get(url)
 
@@ -34,61 +31,45 @@ func Spider(url string, hdr map[string]string, cks []http.Cookie) (int, string) 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer rsp.Body.Close()
 
-	content, _ := ioutil.ReadAll(rsp.Body)
-
-	return rsp.StatusCode, string(content)
+	return rsp
 }
 
-func GetUsefulDat(data string) (lins []string) {
-	reg := regexp.MustCompile(`<tbody id="normalthread_.*?">(.*?)</tbody>`)
-	ctxs := reg.FindAllString(data, 100)
-	return ctxs
-}
+func SpiderWork(count int) {
+	base_url := "https://www.wnflb99.com/forum-2-%d.html" //"https://api.lolicon.app/setu/v2"
 
-func Save2File(fname string, ctx string) {
-	var file *os.File
-	_, err := os.Lstat(fname)
-	if err != nil {
-		file, err = os.Create(fname)
-	} else {
-		file, err = os.OpenFile(fname, os.O_APPEND, 7)
-		if err != nil {
-			log.Fatal(err)
+	start := time.Now()
+
+	hdr := map[string]string{
+		"referer": "https://www.wnflb99.com/forum.php",
+	}
+
+	cks := []http.Cookie{
+		http.Cookie{
+			Name:  "S5r8_2132_saltkey",
+			Value: "Xmw2110g",
+		},
+		http.Cookie{
+			Name:  "S5r8_2132_auth",
+			Value: "5120i4nYO5uZWldiuRIiTcDxUNzkLKEc74w9oT1otlehfudkorAhGJJ7I3LhWLM1S9otzF684pD%2BWUBZe1jXJszYbA",
+		},
+	}
+
+	data := &[]*FulibaSub{}
+	for i := 1; i <= count; i++ {
+		log.Println("------> page:", i)
+		rsp := GetResponse(fmt.Sprintf(base_url, i), hdr, cks)
+		defer rsp.Body.Close()
+		if rsp.StatusCode != 200 {
+			log.Printf("rsp code:%d\n", rsp.StatusCode)
+			continue
 		}
+
+		AnalyzeHtml(rsp, data)
 	}
-	file.Write([]byte(ctx))
+
+	DisplaySortData(data)
+
+	elapsed := time.Since(start)
+	log.Printf("Time %s\n", elapsed)
 }
-
-func MutliCoroSpider() {
-	base_url := "http://www.baidu.com"
-	var goch = make(chan int)
-
-	for i := 0; i < 6; i++ {
-		url := base_url + strconv.Itoa(i)
-		go Spider(url, nil, nil)
-	}
-	for i := 0; i < 6; i++ {
-		<-goch // 记得在 Spider结束时将值写入通道，否则会一直阻塞
-	}
-}
-
-/*
-
-sync.WaitGroup
-
-var wg sync.WaitGroup
-wg.Add(10)
-
-for i:=range []int{1,2,3}{
-	go func(i int){
-		defer wg.Done()
-		Spider(url,i)
-	}(i)
-}
-
-wg.Wait()
-
-
-*/

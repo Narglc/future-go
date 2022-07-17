@@ -5,14 +5,15 @@ import (
 	sp "future-go/go_spider/fuliba_sort"
 	"log"
 	"testing"
+	"time"
 )
 
 func TestLoliConApi(t *testing.T) {
 	url := "https://api.lolicon.app/setu/v2"
 
-	code, ctx := sp.Spider(url, nil, nil)
+	rsp := sp.GetResponse(url, nil, nil)
 
-	log.Print(code, ctx)
+	log.Print((rsp.Body))
 	/*
 	   var result Result
 	   _ = json.Unmarshal(bodyText, &result)
@@ -27,4 +28,8 @@ func TestSimple(t *testing.T) {
 		fmt.Print("--->", k, v)
 	}
 	log.Println()
+
+	fn := fmt.Sprintf(sp.FILE_NAME, time.Now().Format("2006_01_02"))
+	log.Print(fn)
+
 }
