@@ -6,6 +6,7 @@ type FulibaSub struct {
 	Reply int
 	Read  int
 	Url   string
+	Time  string
 }
 
 type FulibaSubs []*FulibaSub
@@ -19,6 +20,6 @@ func (f FulibaSubs) Swap(i, j int) {
 }
 
 func (f FulibaSubs) Less(i, j int) bool {
-	//return f[i].Read > f[j].Read
-	return f[i].Like > f[j].Like
+	return f[i].Read > f[j].Read
+	//return f[i].Like > f[j].Like
 }

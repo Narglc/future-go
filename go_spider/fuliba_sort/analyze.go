@@ -37,6 +37,19 @@ func AnalyzeHtml(rsp *http.Response, data *[]*FulibaSub) {
 		reply_num, _ := strconv.Atoi(s.Find("td.num > a").Text())
 		read_num, _ := strconv.Atoi(s.Find("td.num > em").Text())
 
+		/* 增加时间
+		#normalthread_194786 > tr > td:nth-child(3) > em > span > span
+		#normalthread_185577 > tr > td:nth-child(3) > em > span
+		*/
+		var time string
+		timeSelector := s.Find("tr > td:nth-child(3) > em > span")
+		if tim := timeSelector.Find("span"); tim != nil {
+			time, _ = tim.Attr("title")
+		} else {
+			time = timeSelector.Text()
+		}
+		log.Print("---->Time:", time)
+
 		//fmt.Printf("\n---->title:%v\n like[%d] num:[%d/%d]\n url:%s", title, like, reply_num, read_num, url)
 
 		if title == "" {

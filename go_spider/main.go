@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// TODO: 发帖,学习写个脚本,排序吧里的热帖
 	log.SetFlags(log.LstdFlags)
 	log.Print("args= ", len(os.Args))
 	var count int = 1
