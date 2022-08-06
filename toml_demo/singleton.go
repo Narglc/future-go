@@ -9,13 +9,14 @@ import (
 )
 
 const (
-	CFG_FILE = "./config.toml"
+	CFG_FILE = "C:/Users/Narglc/go/src/future-go/toml_demo/config.toml"
 )
 
 /* 配置的单例模式 */
 var (
-	cfg  *tomlConfig
-	once sync.Once
+	cfg     *tomlConfig
+	once    sync.Once
+	cfgLock = new(sync.RWMutex)
 )
 
 /*
@@ -35,4 +36,27 @@ func Config() *tomlConfig {
 		}
 	})
 	return cfg
+}
+
+func ConfigCouldReload() *tomlConfig {
+	once.Do(ReloadConfig)
+	cfgLock.Lock()
+	defer cfgLock.Unlock()
+	return cfg
+}
+
+func ReloadConfig() {
+	filePath, err := filepath.Abs(CFG_FILE)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("parse toml file once. filePath: %s\n", filePath)
+
+	config := new(tomlConfig)
+	if _, err := toml.DecodeFile(filePath, config); err != nil {
+		panic(err)
+	}
+	cfgLock.Lock()
+	defer cfgLock.Unlock()
+	cfg = config
 }
