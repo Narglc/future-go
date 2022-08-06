@@ -1,0 +1,108 @@
+######################## Demo使用例子 #######################
+config:
+  models:
+    - model1:
+      name: Contract1
+      schema: 'schema/contract_schema1.json'
+    - model2:
+      name: Contract2
+      schema: 'schema/contract_schema2.json'
+  acls:
+    - acl1:
+      model: Contract1
+      role: wx-org1.chainmaker.org
+      operation: create
+      action: ALLOW
+    - acl2:
+      model: Contract2
+      role: wx-org2.chainmaker.org
+      operation: create
+      action: forbid    
+
+
+---  # 在单一文件中，可用连续三个连字号—区分多个文件
+
+######################## yaml 基本语法规则 #######################
+# -  缩进时不允许使用Tab键，只允许使用空格。
+# -  缩进的空格数目不重要，只要相同层级的元素左侧对齐即可
+# -  # 表示注释，从这个字符一直到行尾，都会被解析器忽略。
+
+
+######################## yaml 常用数据结构 #######################
+## 1. 纯量
+
+# 纯量是最基本的，不可再分的值，包括：字符串、布尔值、整数、浮点数、Null、时间、日期等
+name: redis
+version: 5.6
+port: 6379
+stdin: true
+# 空值可以用null也可以使用~
+image: null
+video: ~
+# 日期和时间在yaml中使用的格式是ISO 8601
+data: 2022-07-16
+time: 2022-07-16T20:37:45+08:00
+
+# 对于string类型的字符串，如果一行写不下，可以像下面这么写
+singleLineString: >
+  this is a very long string
+  another line 
+  another line
+# 上面这个字符串会被解析为 "this is a very long string another line another line\n"
+
+singleLineString: >-
+  this is a very long string
+  another line 
+  another line
+# 上面这个字符串会被解析为 "this is a very long string another line another line"
+
+multiLineString: |
+  this is a very long string
+  another line 
+  another line
+# 上面这个字符串会被解析为 "this is a very long string\nanother line\nanother line\n"
+
+
+## 2. 数组和对象
+
+# 数组，数组的元素可以和它的父亲同一层级也可以有缩进
+prots:
+ -6379
+ -6380
+
+# 下面这种写法只适合于纯量，如果数组元素是复合类型就不适合这种写法
+ports: [6379, 6380]
+
+# 对象,对于一个对象的属性缩进得是一样的
+container:
+  name: mysql
+  image: mysql
+  port: 1236
+  version: 5.7
+
+
+######################## 例子 #######################
+# 一个稍微复杂的例子
+apiVersion: V1
+kind: Pod
+
+metadata:
+  name: redis-stdin
+
+spec: 
+  containers: 
+  - name: redis 
+    image: redis
+    imagePullPolicy: Always
+    stdin: true
+    ports:
+    - containerPort: 6379
+    - hostPort: 6380
+  - name: mongodb 
+    image: "mongo: 4.4.3"   # value中如果包含":",使用双引号包含，否则会被识别为不完整的map
+    imagePullPolicy: Always
+    stdin: false
+    ports:
+    - containerPort: 27017
+    - hostPort: 27017
+
