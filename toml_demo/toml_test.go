@@ -42,7 +42,7 @@ func TestTomlUpdateCfg(t *testing.T) {
 	fmt.Println(ConfigCouldReload().Owner.Name)
 
 	s := make(chan os.Signal, 1)
-	signal.Notify(s, syscall.SIGUSR1)
+	signal.Notify(s, syscall.SIGSEGV) //SIGUSR1)
 	go func() {
 		for {
 			<-s

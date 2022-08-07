@@ -1,10 +1,23 @@
 # This is a TOML document.
 
+## TOML 规范 
+# TOML是大小写敏感的
+# TOML文件必须是UTF8编码的
+# 空白符可以是制表符(0x09)或空格(0x20)
+# 换行符可以是 LF (0x0A) 或 CRLF (0x0D0A)
+
+## TOML 详解
+# https://www.cnblogs.com/liang1101/p/7600707.html
+
 title = "TOML Example"
 
 [owner]
 name = "Tom Preston-Werner & Jac Test ======="
 dob = 1979-05-27T07:32:00-08:00 # First class dates
+multi_line = """
+Roses are red
+Violets are blue
+"""
 
 [database]
 server = "192.168.1.1"
