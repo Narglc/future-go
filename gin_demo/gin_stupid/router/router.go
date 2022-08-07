@@ -70,6 +70,10 @@ func SetupRouter() *gin.Engine {
 		/*	LoadHTMLGlob 	将一个目录下所有的模板进行加载
 			LoadHTMLFiles	只会加载一个文件，他的参数为可变长参数  */
 		r.LoadHTMLGlob(consts.GetTmplPath())
+
+		// 添加静态资源 Bootstrap4, 还可以引入 Jquery,Popper
+		r.Static("/statics", "./statics")
+
 		r.GET("/index", handler.Index)
 	}
 
