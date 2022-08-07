@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +26,8 @@ func sayHello(c *gin.Context) {
 
 func main() {
 	// 全局设置环境
-	//gin.SetMode(gin.DebugMode) // gin.ReleaseMode
+	gin.SetMode(gin.DebugMode) // gin.ReleaseMode
+	fmt.Printf("---->gin.Mode()=%s", gin.Mode())
 
 	// 获得路由实例(创建默认的路由引擎)
 	router := gin.Default()
@@ -76,6 +79,18 @@ func main() {
 		v1.GET("/:id", FetchSingleUser)
 		v1.PUT("/:id", UpdateUser)
 		v1.DELETE("/:id", DeleteUser)
+	}
+
+	// 模板tmpl
+	// LoadHTMLGlob 	方法可以将一个目录下所有的模板进行加载
+	// LoadHTMLFiles 	只会加载一个文件
+	{
+		router.LoadHTMLGlob("templates/*")
+		router.GET("/", func(ctx *gin.Context) {
+			ctx.HTML(http.StatusOK, "index.tmpl", gin.H{
+				"title": "hello gin " + strings.ToLower(ctx.Request.Method) + " method",
+			})
+		})
 	}
 
 	// 默认在localhost:8080端口启动服务,也可手动指定 router.Run(":9090")
