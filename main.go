@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	tomldemo "future-go/toml_demo"
 	"log"
@@ -10,11 +11,30 @@ import (
 	"syscall"
 )
 
+func flagDemo() {
+	var user string
+	var password string
+	var host string
+	var port int
+
+	// "u" 指的-u是user参数
+	flag.StringVar(&user, "u", "root", "用户名,默认为root")
+	flag.StringVar(&password, "p", "", "默认为空")
+	flag.StringVar(&host, "h", "localhost", "host参数,默认为localhost")
+	flag.IntVar(&port, "port", 999, "端口")
+
+	// 转换,必须调用该方法
+	flag.Parse()
+	fmt.Println(user, password, host, port)
+}
+
 func main() {
+	flagDemo()
+
 	fmt.Println(tomldemo.ConfigCouldReload().Owner.Name)
 
 	s := make(chan os.Signal, 1)
-	signal.Notify(s, syscall.SIGUSR1) // SIGSEGV
+	signal.Notify(s, syscall.SIGSEGV) //SIGUSR1) // SIGSEGV
 	go func() {
 		for {
 			<-s
