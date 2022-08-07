@@ -28,9 +28,7 @@ func flagDemo() {
 	fmt.Println(user, password, host, port)
 }
 
-func main() {
-	flagDemo()
-
+func tomlTest() {
 	fmt.Println(tomldemo.ConfigCouldReload().Owner.Name)
 
 	s := make(chan os.Signal, 1)
@@ -53,4 +51,9 @@ func main() {
 
 func hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello %s!", tomldemo.ConfigCouldReload().Owner.Name) // 写入到w的是输出到客户端的
+}
+
+func main() {
+	flagDemo()
+	tomlTest()
 }
