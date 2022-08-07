@@ -1,6 +1,7 @@
 package router
 
 import (
+	"future-go/gin_demo/gin_stupid/handler"
 	"net/http"
 	"strings"
 
@@ -41,8 +42,22 @@ func SetupRouter() *gin.Engine {
 
 		// 添加Options请求路由
 		r.OPTIONS("/", retHelloGinAndMethod)
-
 	}
+
+	{
+		// 添加 user
+		// "/:" 该符号表示后面的字符串为一个占位符, 用于将要进行的传值
+		// 此时我们的路由为 /user/{name}
+		r.GET("/user/:name", handler.UserSave)
+
+		r.GET("/user", handler.UserSaveByQuery)
+
+		r.POST("/user",handler.UserSaveByPost)
+	}
+
+
+
+
 
 	return r
 }
