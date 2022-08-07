@@ -1,6 +1,8 @@
 package dao
 
 import (
+	. "future-go/gin_demo/gin_todo/models"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

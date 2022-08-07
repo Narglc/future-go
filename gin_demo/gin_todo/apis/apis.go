@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	. "future-go/gin_demo/gin_todo/dao"
+	. "future-go/gin_demo/gin_todo/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +23,7 @@ func CreateTodo(c *gin.Context) {
 
 	Db.Save(&todo)
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusCreated, gin.H{ // gin.H = map[string]interface{}
 		"status":     http.StatusCreated,
 		"message":    "Todo item created successfully!",
 		"resourceId": todo.ID,
