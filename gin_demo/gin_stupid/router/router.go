@@ -2,9 +2,15 @@ package router
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
+
+// Handler 处理器
+func retHelloGinAndMethod(c *gin.Context) {
+	c.String(http.StatusOK, "hello gin "+strings.ToLower(c.Request.Method)+" method")
+}
 
 /* Gin 的路由支持 GET , POST , PUT , DELETE , PATCH , HEAD , OPTIONS 请求，
 同时还有一个 Any 函数，可以同时支持以上的所有请求。
@@ -14,29 +20,19 @@ func SetupRouter() *gin.Engine {
 
 	{
 		// 添加Get请求路由
-		r.GET("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello gin get method")
-		})
+		r.GET("/", retHelloGinAndMethod)
 
 		// 添加Post请求路由
-		r.POST("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello gin post method")
-		})
+		r.POST("/", retHelloGinAndMethod)
 
 		// 添加Put请求路由
-		r.PUT("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello gin put method")
-		})
+		r.PUT("/", retHelloGinAndMethod)
 
 		// 添加Delete请求路由
-		r.DELETE("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello gin delete method")
-		})
+		r.DELETE("/", retHelloGinAndMethod)
 
 		// 添加Patch请求路由
-		r.PATCH("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello gin patch method")
-		})
+		r.PATCH("/", retHelloGinAndMethod)
 
 		// 添加Head请求路由
 		r.HEAD("/", func(c *gin.Context) {
@@ -44,9 +40,7 @@ func SetupRouter() *gin.Engine {
 		})
 
 		// 添加Options请求路由
-		r.OPTIONS("/", func(c *gin.Context) {
-			c.String(http.StatusOK, "hello gin options method")
-		})
+		r.OPTIONS("/", retHelloGinAndMethod)
 
 	}
 
