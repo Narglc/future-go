@@ -7,12 +7,18 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRouter(t *testing.T) {
-	router := SetupRouter()
+var router *gin.Engine
 
+func init() {
+	gin.SetMode(gin.TestMode)
+	router = SetupRouter()
+}
+
+func TestRouter(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/", nil)
 	router.ServeHTTP(w, req)
@@ -22,8 +28,6 @@ func TestRouter(t *testing.T) {
 
 // router("/") post 测试
 func TestIndexPostRouter(t *testing.T) {
-	router := SetupRouter()
-
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodPost, "/", nil)
 	router.ServeHTTP(w, req)
@@ -33,7 +37,6 @@ func TestIndexPostRouter(t *testing.T) {
 
 func TestUserSave(t *testing.T) {
 	username := "narglc"
-	router := SetupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/user/"+username, nil)
@@ -45,7 +48,6 @@ func TestUserSave(t *testing.T) {
 func TestUserSaveByQuery(t *testing.T) {
 	username := "narglc"
 	age := 32
-	router := SetupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/user?name="+username+"&age="+strconv.Itoa(age), nil)
@@ -57,11 +59,18 @@ func TestUserSaveByQuery(t *testing.T) {
 func TestUserSaveByQueryWithoutAge(t *testing.T) {
 	username := "narglc"
 	age := 20
-	router := SetupRouter()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/user?name="+username+"&age="+strconv.Itoa(age), nil)
 	router.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, fmt.Sprintf(`{"age":"%d","name":"%s"}`, age, username), w.Body.String())
+}
+
+func TestIndexHtml(t *testing.T) {
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "/index", nil)
+	router.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "hello gin get method", "返回的HTML页面中应该包含 hello gin get method")
 }
