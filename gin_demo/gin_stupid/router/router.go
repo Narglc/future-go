@@ -71,10 +71,13 @@ func SetupRouter() *gin.Engine {
 			LoadHTMLFiles	只会加载一个文件，他的参数为可变长参数  */
 		r.LoadHTMLGlob(consts.GetTmplPath())
 
+		// 添加网站图标 (或加载静态html网页)  ???
+		r.StaticFile("/favicon.ico", "./favicon.ico")
+
 		// 添加静态资源 Bootstrap4, 还可以引入 Jquery,Popper
 		r.Static("/statics", "./statics")
 
-		r.GET("/index", handler.Index)
+		r.Any("/index", handler.Index)
 	}
 
 	return r
