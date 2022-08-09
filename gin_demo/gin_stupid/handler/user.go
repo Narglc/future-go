@@ -47,3 +47,10 @@ func UserSaveByPost(c *gin.Context) {
 		"age":  age,
 	})
 }
+
+func UserRegister(c *gin.Context) {
+	email := c.PostForm("email")
+	password := c.DefaultPostForm("password", "Wa123456")
+	passwordAgain := c.DefaultPostForm("password-again", "Wa123456")
+	println("email", email, "password", password, "password-again:", passwordAgain)
+}

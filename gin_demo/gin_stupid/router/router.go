@@ -49,11 +49,14 @@ func SetupRouter() *gin.Engine {
 		// 添加 user
 		// "/:" 该符号表示后面的字符串为一个占位符, 用于将要进行的传值
 		// 此时我们的路由为 /user/{name}
-		userRouter := r.Group("user")
+		userRouter := r.Group("/user")
 		{
 			userRouter.GET("/:name", handler.UserSave)
 			userRouter.GET("", handler.UserSaveByQuery)
 			userRouter.POST("", handler.UserSaveByPost)
+
+			// 表单提交
+			userRouter.POST("/register", handler.UserRegister)
 		}
 	}
 

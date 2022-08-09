@@ -1,9 +1,11 @@
 package router
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 	"testing"
 
@@ -72,5 +74,18 @@ func TestIndexHtml(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodGet, "/index", nil)
 	router.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Contains(t, w.Body.String(), "hello gin get method", "返回的HTML页面中应该包含 hello gin get method")
+	assert.Contains(t, w.Body.String(), "Gin Hello", "返回的HTML页面中应该包含 Gin Hello")
+}
+
+func TestUserPostForm(t *testing.T) {
+	value := url.Values{}
+	value.Add("email", "qingcheliuzhi@qq.com")
+	value.Add("password", "123456")
+	value.Add("password-again", "123456")
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/user/register", bytes.NewBufferString(value.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
+	router.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
