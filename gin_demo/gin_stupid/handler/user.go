@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"future-go/gin_demo/gin_stupid/model"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -48,9 +50,12 @@ func UserSaveByPost(c *gin.Context) {
 	})
 }
 
-func UserRegister(c *gin.Context) {
-	email := c.PostForm("email")
-	password := c.DefaultPostForm("password", "Wa123456")
-	passwordAgain := c.DefaultPostForm("password-again", "Wa123456")
-	println("email", email, "password", password, "password-again:", passwordAgain)
+func UserRegister(context *gin.Context) {
+	var user model.UserModel
+	if err := context.ShouldBind(&user); err != nil {
+		log.Println("err ->", err.Error())
+		context.String(http.StatusBadRequest, "输入的数据不合法")
+	}
+	log.Println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
+	context.Redirect(http.StatusMovedPermanently, "/")
 }
