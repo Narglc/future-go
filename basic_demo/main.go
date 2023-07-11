@@ -4,7 +4,8 @@ import (
 	"fmt"
 	contextdemo "future-go/basic_demo/context_demo"
 	flagdemo "future-go/basic_demo/flag_demo"
-	_ "future-go/basic_demo/init_demo"       // 匿名引入包，只为在main之前调用init_demo中的init函数进行资源初始化
+	_ "future-go/basic_demo/init_demo" // 匿名引入包，只为在main之前调用init_demo中的init函数进行资源初始化
+	loggerdemo "future-go/basic_demo/logger_demo"
 	demo "future-go/basic_demo/package_demo" // 包的路径: 以goPath的src为根目录定义,仅到目标目录为止,且必须双引号
 	"log"
 )
@@ -20,4 +21,7 @@ func main() {
 
 	/* context demo */
 	contextdemo.TestContext()
+
+	/* logger demo */
+	loggerdemo.TestLogger()
 }

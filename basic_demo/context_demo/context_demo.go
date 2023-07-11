@@ -24,7 +24,7 @@ func value() {
 
 // context.WithTimeout, ctx.Done(), ctx.Err()
 func timeout() {
-	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*3) //time.Millisecond * 1000
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*1) //time.Millisecond * 1000
 	t0 := time.Now()
 	defer cancel()
 
