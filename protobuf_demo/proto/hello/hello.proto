@@ -1,0 +1,47 @@
+// syntax：是必须写的，而且要定义在第一行；目前proto3是主流，不写默认使用proto2
+syntax = "proto3";                //定义proto版本号
+
+package hello;                    // 定义包名，用于proto
+
+option go_package = "./;hello";   // 定义go包名，用于生成 .pb.go 文件
+
+message Say{                      // 定义消息体
+  int64           id    = 1;
+  string          hello = 2;
+  repeated string word  = 3;
+}
+
+enum SexType //枚举消息类型，使用enum关键词定义,一个性别类型的枚举类型
+{
+    UNKONW = 0; //proto3版本中，首成员必须为0，成员不应有相同的值
+    MALE = 1;  //1男
+    FEMALE = 2; //2女  0未知
+}
+
+// 定义一个用户消息
+message UserInfo
+{
+    string name = 1; // 姓名字段
+    SexType sex = 2; // 性别字段，使用SexType枚举类型
+}
+
+// 消息的嵌套
+message ListArticle {
+  // 嵌套消息定义
+  message Article {
+    string url = 1;
+    string title = 2;
+    repeated string tags = 3;
+  }
+  // 引用嵌套的消息定义
+  repeated Article articles = 1;
+}
+
+message StudyInfo {
+  int64              id       = 1; //id
+  string             name     = 2; //学习的科目名称
+  int32              duration = 3; //学习的时长 单位秒
+
+  // 注意：Map 字段是不能使用repeated关键字修饰。
+  map<string, int32> score    = 4; //学习的分数
+}

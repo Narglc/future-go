@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+// 导入Article消息定义
+import "article.proto";
+
+package nesting;
+
+option go_package = "./;article";
+
+// 定义ListArticle消息
+message ListArticle {
+  // 使用导入的Result消息
+  repeated Article articles = 1;
+}

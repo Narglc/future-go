@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package nesting;
+
+option go_package = "./;article";
+
+message Article {
+  string          url   = 1;
+  string          title = 2;
+  repeated string tags  = 3; // 字符串数组类型
+}
