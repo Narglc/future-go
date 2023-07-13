@@ -2,7 +2,6 @@ package interview
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -68,7 +67,7 @@ func initZeroMq() *zmq4.Socket {
 	}
 
 	// 绑定PUB套接字到指定地址
-	publisher.Bind("tcp://127.0.0.1:5001")
+	publisher.Bind("tcp://127.0.0.1:5002")
 	return publisher
 }
 
@@ -91,7 +90,7 @@ func (s *KlinesPub) OnTick(event Tick) {
 	}
 
 	if !isSub {
-		//fmt.Printf("未订阅该标的：%s", event.Symbol)
+		//log.Printf("未订阅该标的：%s", event.Symbol)
 		return
 	}
 
@@ -102,7 +101,7 @@ func (s *KlinesPub) OnTick(event Tick) {
 
 	price := (event.BestBidPrice + event.BestAskPrice) / 2
 	curTickTime := time.Unix(event.Timestamp/1e9, 0)
-	fmt.Printf("OnTick:%s:-->Time:%v\n", event.Symbol, curTickTime)
+	//log.Printf("OnTick:%s:-->Time:%v\n", event.Symbol, curTickTime)
 
 	// 第一次行情数据
 	if currentCandlestick.Open == 0 {
@@ -164,7 +163,7 @@ func (s *KlinesPub) OnTrade(event Trade) {
 	}
 
 	if !isSub {
-		//fmt.Printf("未订阅该标的：%s", event.Symbol)
+		//log.Printf("未订阅该标的：%s", event.Symbol)
 		return
 	}
 
@@ -174,7 +173,7 @@ func (s *KlinesPub) OnTrade(event Trade) {
 	}
 
 	curTickTime := time.Unix(event.Timestamp/1e9, 0)
-	fmt.Printf("OnTick:%s:-->Time:%v\n", event.Symbol, curTickTime)
+	//log.Printf("OnTick:%s:-->Time:%v\n", event.Symbol, curTickTime)
 
 	// 第一次行情数据
 	if currentCandlestick.Open == 0 {
@@ -246,42 +245,47 @@ func (s *KlinesPub) OnTrade(event Trade) {
 	}
 }
 
-func (s *KlinesPub) Publish() {
-	//测试出口
-	s.pubMsg.Klines = s.curKLineMsg.Klines
-
+func (s *KlinesPub) publish() {
 	// 程序启动后第一根k线丢弃掉，因为不完整
 	if s.firstKLine {
 		s.firstKLine = false
+		log.Printf("程序启动后第一根k线丢弃掉")
 		return
 	}
 
 	// 检查所有sub是否都已经汇总了分钟线
 	if len(s.symbols) != len(s.pubMsg.Klines) {
-		fmt.Printf("未收集完成,请检查数据源")
+		log.Printf("未收集完成,请检查数据源")
+	}
+
+	// pubMsg.Klines 为空时，跳过本次pub
+	if len(s.pubMsg.Klines) == 0 {
+		log.Printf("无待Pub的Kline数据")
+		return
 	}
 
 	out, err := json.Marshal(s.pubMsg.Klines)
 	if err != nil {
-		fmt.Printf("pub err:%s", err)
+		log.Printf("json.Marshal err:%s", err)
+		return
 	}
-	fmt.Printf("KlinesPub Json:%s\n", out)
+	log.Printf("KlinesPub Json:%s\n", out)
 
 	// pub到zeromq
 	if n, err := s.publisher.Send(string(out), 0); err != nil {
-		fmt.Printf("pub.Send err:%v\n", err)
+		log.Printf("pub.Send err:%v\n", err)
 	} else {
-		fmt.Printf("pub.Send %d bytes.\n", n)
+		log.Printf("pub.Send Succ data has %d bytes.\n", n)
 	}
 
 	// pub后需要将pubMsg数据清空
 	s.pubMsg.Klines = make(map[string]KlineJson)
 }
 
-func (s *KlinesPub) PublishTask() {
+func (s *KlinesPub) Publish() {
 	for {
 		// 执行Pub任务，第一次会被丢弃
-		s.Publish()
+		s.publish()
 
 		// 获取当前时间
 		now := time.Now()

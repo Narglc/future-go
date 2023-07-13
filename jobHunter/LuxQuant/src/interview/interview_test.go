@@ -22,7 +22,7 @@ func zmqRecv() {
 
 	defer subscriber.Close()
 
-	err = subscriber.Connect("tcp://127.0.0.1:5001") // 连接到Pub（发布）端的地址
+	err = subscriber.Connect("tcp://127.0.0.1:5002") // 连接到Pub（发布）端的地址
 
 	if err != nil {
 		log.Fatalf("subscriber.Connect fail, err:%v", err)
@@ -36,7 +36,7 @@ func zmqRecv() {
 
 	for {
 		msg, _ := subscriber.Recv(0)
-		fmt.Println("Received:", msg)
+		fmt.Println("zmq subscriber Received:", msg)
 	}
 }
 func TestKlinesPub(t *testing.T) {
@@ -58,8 +58,9 @@ func TestKlinesPub(t *testing.T) {
 
 	// 启动协程，定时在每分钟开始的500ms时刻进行Pub
 	// 使用实时数据源
-	go testSub.PublishTask()
+	go testSub.Publish()
 
+	// 启动协程模拟zmq订阅端
 	go zmqRecv()
 
 	scanner := bufio.NewScanner(file)
@@ -67,7 +68,6 @@ func TestKlinesPub(t *testing.T) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		// 接收到行情 或 交易信息，进行处理
-		//t.Logf("%s", line)
 		parts := strings.Split(line, " ")
 
 		if parts[0] == "OnTrade" {
@@ -96,5 +96,5 @@ func TestKlinesPub(t *testing.T) {
 		t.Log(err)
 	}
 
-	time.Sleep(time.Second * 90)
+	time.Sleep(time.Second * 120)
 }
