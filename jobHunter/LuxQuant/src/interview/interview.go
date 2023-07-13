@@ -3,7 +3,10 @@ package interview
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
+
+	"github.com/pebbe/zmq4"
 )
 
 type Tick struct {
@@ -47,6 +50,26 @@ type KlinesPub struct {
 	symbols     []string      // sub的标的物列表
 	pubMsg      KlinesMessage // 待pub的Kline
 	curKLineMsg KlinesMessage // 当前正在统计的分钟线数据
+	publisher   *zmq4.Socket  // zeromq 发布端socket
+}
+
+func initZeroMq() *zmq4.Socket {
+	// 创建一个ZeroMQ上下文
+	context, err := zmq4.NewContext()
+
+	if err != nil {
+		log.Fatalf("zmq4.NewContext fail, err:%v", err)
+	}
+
+	// 创建PUB套接字
+	publisher, err := context.NewSocket(zmq4.PUB)
+	if err != nil {
+		log.Fatalf("context.NewSocket fail, err:%v", err)
+	}
+
+	// 绑定PUB套接字到指定地址
+	publisher.Bind("tcp://127.0.0.1:5001")
+	return publisher
 }
 
 func (s *KlinesPub) Init(symbols []string) {
@@ -54,6 +77,7 @@ func (s *KlinesPub) Init(symbols []string) {
 	s.symbols = symbols
 	s.pubMsg.Klines = make(map[string]KlineJson)
 	s.curKLineMsg.Klines = make(map[string]KlineJson)
+	s.publisher = initZeroMq()
 }
 
 func (s *KlinesPub) OnTick(event Tick) {
@@ -67,7 +91,7 @@ func (s *KlinesPub) OnTick(event Tick) {
 	}
 
 	if !isSub {
-		fmt.Printf("未订阅该标的：%s", event.Symbol)
+		//fmt.Printf("未订阅该标的：%s", event.Symbol)
 		return
 	}
 
@@ -140,7 +164,7 @@ func (s *KlinesPub) OnTrade(event Trade) {
 	}
 
 	if !isSub {
-		fmt.Printf("未订阅该标的：%s", event.Symbol)
+		//fmt.Printf("未订阅该标的：%s", event.Symbol)
 		return
 	}
 
@@ -223,6 +247,9 @@ func (s *KlinesPub) OnTrade(event Trade) {
 }
 
 func (s *KlinesPub) Publish() {
+	//测试出口
+	s.pubMsg.Klines = s.curKLineMsg.Klines
+
 	// 程序启动后第一根k线丢弃掉，因为不完整
 	if s.firstKLine {
 		s.firstKLine = false
@@ -238,16 +265,14 @@ func (s *KlinesPub) Publish() {
 	if err != nil {
 		fmt.Printf("pub err:%s", err)
 	}
-	fmt.Printf("KlinesPub:%s", out)
+	fmt.Printf("KlinesPub Json:%s\n", out)
 
 	// pub到zeromq
-	/*
-		publisher, _ := zmq.NewSocket(zmq.PUB)
-		defer publisher.Close()
-		publisher.Bind("tcp://127.0.0.1:5555")
-
-		publisher.Send(s.pubMsg, 0)
-	*/
+	if n, err := s.publisher.Send(string(out), 0); err != nil {
+		fmt.Printf("pub.Send err:%v\n", err)
+	} else {
+		fmt.Printf("pub.Send %d bytes.\n", n)
+	}
 
 	// pub后需要将pubMsg数据清空
 	s.pubMsg.Klines = make(map[string]KlineJson)
