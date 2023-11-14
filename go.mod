@@ -10,6 +10,7 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/pebbe/zmq4 v1.2.10
+	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.8.3
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.3.5
@@ -39,6 +40,7 @@ require (
 )
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
