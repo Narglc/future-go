@@ -5,6 +5,8 @@ import (
 	"io"
 	"time"
 
+	"traceRpcSvr/greeter"
+
 	"go-micro.dev/v4/logger"
 
 	pb "traceRpcSvr/proto"
@@ -14,7 +16,7 @@ type TraceRpcSvr struct{}
 
 func (e *TraceRpcSvr) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
 	logger.Infof("Received TraceRpcSvr.Call request: %v", req)
-	rsp.Msg = "Hello " + req.Name
+	rsp.Msg = greeter.Greet(ctx, req.Name)
 	return nil
 }
 

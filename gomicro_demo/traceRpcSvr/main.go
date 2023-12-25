@@ -1,7 +1,6 @@
 package main
 
 import (
-
 	"traceRpcSvr/handler"
 	pb "traceRpcSvr/proto"
 
@@ -10,7 +9,6 @@ import (
 	"go-micro.dev/v4/logger"
 
 	"github.com/go-micro/cli/debug/trace/jaeger"
-
 )
 
 var (
@@ -29,7 +27,6 @@ func main() {
 		logger.Fatal(err)
 	}
 	defer closer.Close()
-
 
 	// Create service
 	srv := micro.NewService(

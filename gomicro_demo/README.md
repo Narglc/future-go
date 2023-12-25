@@ -27,7 +27,13 @@ go-micro call helloworld Helloworld.Call '{"name": "John"}'
 # 创建项目
 go-micro new service --jaeger traceRpcSvr
 
-## 如上述编译运行
+# 如上述编译运行
+cd helloworld
+make proto tidy
+go-micro run
+
+# 测试
+go-micro call tracerpcsvr TraceRpcSvr.Call '{"name": "John"}'
 ```
  #### 使用docker-compose部署服务
  ```
