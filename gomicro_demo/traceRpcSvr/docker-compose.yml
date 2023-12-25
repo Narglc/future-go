@@ -10,12 +10,12 @@ services:
     ports:
       - "1314:6831/udp"
       - "1315:16686"
-    networks:
-      - backend
+    # networks:
+    #   - backend
 
 # -----------------------------
 # networks
 # -----------------------------
-networks:
-  backend:
-    external: true
+# networks:
+#   backend:
+#     external: true
