@@ -25,6 +25,8 @@ func NewHttp_greetLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Http_g
 
 func (l *Http_greetLogic) Http_greet(req *types.Request) (resp *types.Response, err error) {
 	// todo: add your logic here and delete this line
-
+	resp = &types.Response{
+		Message: "hello the world again....",
+	}
 	return
 }
