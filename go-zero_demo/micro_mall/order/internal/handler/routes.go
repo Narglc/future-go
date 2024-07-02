@@ -14,6 +14,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
+				Path:    "/api/order/get/:id",
+				Handler: GetOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/from/:name",
 				Handler: OrderHandler(serverCtx),
 			},

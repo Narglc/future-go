@@ -12,7 +12,6 @@ type (
 	OrderReq {
 		Id string `path:"id"`
 	}
-
 	OrderReply {
 		Id       string `json:"id"`
 		Name     string `json:"name"`
@@ -27,3 +26,4 @@ service order-api {
 	@handler GetOrderHandler
 	get /api/order/get/:id (OrderReq) returns (OrderReply)
 }
+
