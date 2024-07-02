@@ -1,8 +1,6 @@
 package svc
 
-import (
-	"future-go/go-zero_demo/micro_mall/user/internal/config"
-)
+import "future-go/go-zero_demo/micro_mall/user/rpc/internal/config"
 
 type ServiceContext struct {
 	Config config.Config
