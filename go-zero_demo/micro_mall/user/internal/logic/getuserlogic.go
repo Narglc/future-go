@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 
-	"future-go/go-zero_demo/micro_mall/user/rpc/internal/svc"
-	"future-go/go-zero_demo/micro_mall/user/rpc/types/user"
+	"future-go/go-zero_demo/micro_mall/user/internal/svc"
+	"future-go/go-zero_demo/micro_mall/user/types/user"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -26,5 +26,9 @@ func NewGetUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserLo
 func (l *GetUserLogic) GetUser(in *user.IdRequest) (*user.UserResponse, error) {
 	// todo: add your logic here and delete this line
 
-	return &user.UserResponse{}, nil
+	return &user.UserResponse{
+		Id:     in.GetId(),
+		Name:   "hello user name",
+		Gender: "male",
+	}, nil
 }
