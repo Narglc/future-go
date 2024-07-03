@@ -1,10 +1,10 @@
 package svc
 
 import (
-	database "command-line-arguments/Users/narglc/go/src/future-go/go-zero_demo/micro_mall/user/database/sqlx.go"
-	"command-line-arguments/Users/narglc/go/src/future-go/go-zero_demo/micro_mall/user/internal/dao"
-	"command-line-arguments/Users/narglc/go/src/future-go/go-zero_demo/micro_mall/user/internal/repo"
+	"future-go/go-zero_demo/micro_mall/user/database"
 	"future-go/go-zero_demo/micro_mall/user/internal/config"
+	"future-go/go-zero_demo/micro_mall/user/internal/dao"
+	"future-go/go-zero_demo/micro_mall/user/internal/repo"
 )
 
 type ServiceContext struct {
