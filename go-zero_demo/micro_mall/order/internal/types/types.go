@@ -18,3 +18,14 @@ type Request struct {
 type Response struct {
 	Message string `json:"message"`
 }
+
+type UserRegisterReq struct {
+	Name   string `json:"name"`
+	Gender string `json:"gender"`
+}
+
+type UserRegisterRsp struct {
+	Id     string `json:"id"`
+	Name   string `json:"name"`
+	Gender string `json:"gender"`
+}
