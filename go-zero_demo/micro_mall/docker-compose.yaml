@@ -1,5 +1,15 @@
 version: '3'
 services:
+  Redis:
+    container_name: redis6
+    image: redis:${REDIS_VERSION}
+    restart: always
+    volumes:
+      - ${REDIS_DIR}/data:/data
+      - ${REDIS_DIR}/conf/redis.conf:/etc/redis/redis.conf
+    ports:
+      - ${REDIS_PORT}:6379
+    command: redis-server /etc/redis/redis.conf
   mysql:
     container_name: mysql8
     image: mysql:${MYSQL_VERSION}
