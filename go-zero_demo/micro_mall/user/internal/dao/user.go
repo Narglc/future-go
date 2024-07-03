@@ -6,7 +6,7 @@ import (
 	"future-go/go-zero_demo/micro_mall/user/database"
 	"future-go/go-zero_demo/micro_mall/user/internal/model"
 
-	"github.com/tal-tech/go-zero/core/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
 var cacheUserIdPrefix = "cache:user:id:"
@@ -40,6 +40,7 @@ func (d *userDao) FindById(ctx context.Context, id int64) (user *model.User, err
 	user = &model.User{}
 	query := fmt.Sprintf("select * from %s where id = ?", user.TableName())
 	userIdKey := fmt.Sprintf("%s:%d", cacheUserIdPrefix, id)
+	// 先从缓存中查找，（默认保存七天？），缓存没有的也会在读取DB后缓存下来
 	err = d.ConnCache.QueryRowCtx(ctx, user, userIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})

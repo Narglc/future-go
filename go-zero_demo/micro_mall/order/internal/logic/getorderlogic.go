@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 
 	"future-go/go-zero_demo/micro_mall/order/internal/svc"
 	"future-go/go-zero_demo/micro_mall/order/internal/types"
@@ -40,8 +41,8 @@ func (l *GetOrderLogic) GetOrder(req *types.OrderReq) (resp *types.OrderReply, e
 
 	resp = &types.OrderReply{
 		Id:       userResponse.Id,
-		Name:     "hello user name.",
-		UserName: userResponse.Name,
+		Name:     userResponse.Name,
+		UserName: fmt.Sprintf("gender:%s", userResponse.Gender),
 	}
 
 	return

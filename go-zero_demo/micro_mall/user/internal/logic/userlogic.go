@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"future-go/go-zero_demo/micro_mall/user/internal/model"
 	"future-go/go-zero_demo/micro_mall/user/internal/svc"
@@ -27,11 +29,23 @@ func NewUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLogic {
 
 func (u *UserLogic) GetUser(in *user.IdRequest) (*user.UserResponse, error) {
 	// todo: add your logic here and delete this line
+	// 修改为数据库、redis实现
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelFunc()
+
+	//userId, _ := strconv.Atoi(in.GetId())
+	userId, _ := strconv.ParseInt(in.GetId(), 10, 64)
+
+	userData, err := u.svcCtx.UserRepo.FindById(ctx, int64(userId))
+
+	if err != nil {
+		return nil, err
+	}
 
 	return &user.UserResponse{
 		Id:     in.GetId(),
-		Name:   "i got your real name",
-		Gender: "male",
+		Name:   userData.Name,
+		Gender: userData.Gender,
 	}, nil
 }
 
