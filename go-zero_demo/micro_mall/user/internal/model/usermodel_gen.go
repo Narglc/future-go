@@ -36,12 +36,6 @@ type (
 		sqlc.CachedConn
 		table string
 	}
-
-	User struct {
-		Id     int64  `db:"id"`
-		Name   string `db:"name"`
-		Gender string `db:"gender"`
-	}
 )
 
 func newUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *defaultUserModel {
