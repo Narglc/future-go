@@ -25,7 +25,8 @@ type UserRegisterReq struct {
 }
 
 type UserRegisterRsp struct {
-	Id     string `json:"id"`
-	Name   string `json:"name"`
-	Gender string `json:"gender"`
+	Id      string `json:"id"`
+	Name    string `json:"name"`
+	Gender  string `json:"gender"`
+	Message string `json:"message"`
 }
