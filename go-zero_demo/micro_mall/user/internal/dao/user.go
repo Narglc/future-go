@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"future-go/go-zero_demo/micro_mall/user/database"
 	"future-go/go-zero_demo/micro_mall/user/internal/model"
+
+	"github.com/tal-tech/go-zero/core/stores/sqlx"
 )
+
+var cacheUserIdPrefix = "cache:user:id:"
 
 type userDao struct {
 	*database.DBConn
@@ -30,4 +34,14 @@ func (d *userDao) Save(ctx context.Context, user *model.User) error {
 	}
 	user.Id = id
 	return nil
+}
+
+func (d *userDao) FindById(ctx context.Context, id int64) (user *model.User, err error) {
+	user = &model.User{}
+	query := fmt.Sprintf("select * from %s where id = ?", user.TableName())
+	userIdKey := fmt.Sprintf("%s:%d", cacheUserIdPrefix, id)
+	err = d.ConnCache.QueryRowCtx(ctx, user, userIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
+	return
 }
