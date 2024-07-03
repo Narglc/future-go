@@ -10,7 +10,7 @@ services:
     ports:
       - ${REDIS_PORT}:6379
     command: redis-server /etc/redis/redis.conf
-  mysql:
+  MySql:
     container_name: mysql8
     image: mysql:${MYSQL_VERSION}
     restart: always

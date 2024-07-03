@@ -3,22 +3,22 @@ package handler
 import (
 	"net/http"
 
-	"future-go/go-zero_demo/micro_mall/order/internal/logic"
-	"future-go/go-zero_demo/micro_mall/order/internal/svc"
-	"future-go/go-zero_demo/micro_mall/order/internal/types"
+	"future-go/go-zero_demo/micro_mall/gate/internal/logic"
+	"future-go/go-zero_demo/micro_mall/gate/internal/svc"
+	"future-go/go-zero_demo/micro_mall/gate/internal/types"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func OrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.Request
+		var req types.UserRegisterReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := logic.NewOrderLogic(r.Context(), svcCtx)
-		resp, err := l.Order(&req)
+		l := logic.NewRegisterLogic(r.Context(), svcCtx)
+		resp, err := l.Register(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

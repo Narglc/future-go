@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"future-go/go-zero_demo/micro_mall/order/internal/svc"
-	"future-go/go-zero_demo/micro_mall/order/internal/types"
+	"future-go/go-zero_demo/micro_mall/gate/internal/svc"
+	"future-go/go-zero_demo/micro_mall/gate/internal/types"
 	"future-go/go-zero_demo/micro_mall/user/types/user"
 
 	"github.com/zeromicro/go-zero/core/logx"

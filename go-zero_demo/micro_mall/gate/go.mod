@@ -1,4 +1,4 @@
-module future-go/go-zero_demo/micro_mall/order
+module future-go/go-zero_demo/micro_mall/gate
 
 go 1.22.0
 

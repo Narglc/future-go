@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"future-go/go-zero_demo/micro_mall/order/internal/config"
+	"future-go/go-zero_demo/micro_mall/gate/internal/config"
 	"future-go/go-zero_demo/micro_mall/user/userclient"
 
 	"github.com/zeromicro/go-zero/zrpc"

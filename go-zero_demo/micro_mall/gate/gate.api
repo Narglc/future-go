@@ -9,10 +9,10 @@ type Response {
 }
 
 type (
-	OrderReq {
+	IdRequest {
 		Id string `path:"id"`
 	}
-	OrderReply {
+	UserResponse {
 		Id       string `json:"id"`
 		Name     string `json:"name"`
 		UserName string `json:"userName"`
@@ -31,14 +31,26 @@ type UserRegisterRsp {
 	Message string `json:"message"`
 }
 
-service order-api {
-	@handler OrderHandler
+type UserLoginReq {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+}
+
+type UserLoginRsp {
+	Token string `json:"token"`
+}
+
+service gate-api {
+	@handler GateTestHandler
 	get /from/:name (Request) returns (Response)
 
-	@handler GetOrderHandler
-	get /api/order/get/:id (OrderReq) returns (OrderReply)
+	@handler GetUserHandler
+	get /user/get/:id (IdRequest) returns (UserResponse)
 
 	@handler RegisterHandler
-	post /api/user/register (UserRegisterReq) returns (UserRegisterRsp)
+	post /register (UserRegisterReq) returns (UserRegisterRsp)
+
+	@handler LoginHandler
+	post /login (UserLoginReq) returns (UserLoginRsp)
 }
 

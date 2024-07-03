@@ -4,7 +4,7 @@ package handler
 import (
 	"net/http"
 
-	"future-go/go-zero_demo/micro_mall/order/internal/svc"
+	"future-go/go-zero_demo/micro_mall/gate/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -14,18 +14,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/api/order/get/:id",
-				Handler: GetOrderHandler(serverCtx),
+				Path:    "/from/:name",
+				Handler: GateTestHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/api/user/register",
+				Path:    "/login",
+				Handler: LoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/register",
 				Handler: RegisterHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/from/:name",
-				Handler: OrderHandler(serverCtx),
+				Path:    "/user/get/:id",
+				Handler: GetUserHandler(serverCtx),
 			},
 		},
 	)
