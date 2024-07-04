@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"future-go/go-zero_demo/micro_mall/gate/internal/errorx"
 	"future-go/go-zero_demo/micro_mall/gate/internal/svc"
 	"future-go/go-zero_demo/micro_mall/gate/internal/types"
 	"future-go/go-zero_demo/micro_mall/user/types/user"
@@ -33,6 +34,11 @@ func (l *UserLogic) GetUser(req *types.IdRequest) (resp *types.UserResponse, err
 	// 认证通过后，可从token中获取用于id userid， 框架会将其保存在 ctx 上下文中
 	userId := l.ctx.Value("userId")
 	logx.Infof("获取的token内容:%s \n", userId)
+
+	// 自定义错误
+	if req.Id == "1" {
+		return nil, errorx.ParamsError
+	}
 
 	// 根据用户id去user服务获取用户信息
 	userResponse, err := l.svcCtx.UserRpc.GetUser(context.Background(), &user.IdRequest{
