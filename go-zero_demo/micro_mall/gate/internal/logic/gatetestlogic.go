@@ -26,5 +26,8 @@ func NewGateTestLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GateTest
 func (l *GateTestLogic) GateTest(req *types.Request) (resp *types.Response, err error) {
 	// todo: add your logic here and delete this line
 	logx.Infof("执行test业务处理")
+	resp = &types.Response{
+		Message: "you got the correct api...congratulations.",
+	}
 	return
 }
