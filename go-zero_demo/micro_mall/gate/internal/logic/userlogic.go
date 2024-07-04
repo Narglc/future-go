@@ -12,21 +12,49 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type RegisterLogic struct {
+type UserLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RegisterLogic {
-	return &RegisterLogic{
+func NewUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLogic {
+	return &UserLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *RegisterLogic) Register(req *types.UserRegisterReq) (resp *types.UserRegisterRsp, err error) {
+func (l *UserLogic) GetUser(req *types.IdRequest) (resp *types.UserResponse, err error) {
+	// todo: add your logic here and delete this line
+	userId := req.Id
+
+	// 根据用户id去user服务获取用户信息
+	userResponse, err := l.svcCtx.UserRpc.GetUser(context.Background(), &user.IdRequest{
+		Id: userId,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp = &types.UserResponse{
+		Id:       userResponse.Id,
+		Name:     userResponse.Name,
+		UserName: fmt.Sprintf("gender:%s", userResponse.Gender),
+	}
+
+	return
+}
+
+func (l *UserLogic) Login(req *types.UserLoginReq) (resp *types.UserLoginRsp, err error) {
+	// todo: add your logic here and delete this line
+
+	return
+}
+
+func (l *UserLogic) Register(req *types.UserRegisterReq) (resp *types.UserRegisterRsp, err error) {
 	// todo: add your logic here and delete this line
 
 	// 超时上下文控制,10ms会超时
