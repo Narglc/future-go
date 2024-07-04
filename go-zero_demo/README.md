@@ -231,3 +231,9 @@ func (l *UserLogic) GetUser(req *types.IdRequest) (resp *types.UserResponse, err
     ...
 }
 ```
+
+
+### Prometheus Graph 查询语法
+```
+{app='user-rpc'}
+```
