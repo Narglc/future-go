@@ -32,7 +32,7 @@ type UserRegisterRsp {
 }
 
 type UserLoginReq {
-	Name     string `json:"name"`
+	Username     string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -40,6 +40,9 @@ type UserLoginRsp {
 	Token string `json:"token"`
 }
 
+@server (
+	jwt: Auth
+)
 service gate-api {
 	@handler GateTestHandler
 	get /from/:name (Request) returns (Response)

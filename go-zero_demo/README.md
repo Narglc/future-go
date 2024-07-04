@@ -158,4 +158,76 @@ jwt 是**加密的字符串**，需要一个密钥，并可以通过设置过期
 对象为一个很长的字符串，字符之间通过"."分隔符分为三个子串。注意JWT对象为一个长字串，各字串之间也没有换行符，一般格式为：**xxxxx.yyyyy.zzzzz** 。
 ![TOKEN组成部分](https://ask.qcloudimg.com/http-save/yehe-2874029/xrvp4pjty8.png)
 
+#### goctl方法
+```bash
+# 1. 在 gate.api中增加 @server jwt:Auth 字段
+@server (
+	jwt: Auth
+)
+service gate-api {
+	@handler GateTestHandler
+	get /from/:name (Request) returns (Response)
 
+	@handler GetUserHandler
+	get /user/get/:id (IdRequest) returns (UserResponse)
+
+	@handler RegisterHandler
+	post /register (UserRegisterReq) returns (UserRegisterRsp)
+
+	@handler LoginHandler
+	post /login (UserLoginReq) returns (UserLoginRsp)
+}
+
+# 2. 命令行执行
+goctl api go -api gate.api -dir . 
+```
+
+#### 手动添加只需在 `routes.go` 中增加如下一段
+```golang
+rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+```
+
+即
+
+```golang
+func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	handler := NewUserHandler(serverCtx)
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodPost,
+				Path:    "/register",
+				Handler: handler.Register,
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/login",
+				Handler: handler.Login,
+			},
+		},
+	)
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/user/get/:id",
+				Handler: handler.GetUser,
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+}
+```
+
+#### 鉴权接口获取并使用token
+```golang
+func (l *UserLogic) GetUser(req *types.IdRequest) (resp *types.UserResponse, err error) {
+	// todo: add your logic here and delete this line
+
+	// 认证通过后，可从token中获取用于id userid， 框架会将其保存在 ctx 上下文中
+	userId := l.ctx.Value("userId")
+	logx.Info("获取的token内容:%S \n", userId)
+    
+    ...
+}
+```

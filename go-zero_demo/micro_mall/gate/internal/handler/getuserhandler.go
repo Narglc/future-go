@@ -6,6 +6,7 @@ import (
 	"future-go/go-zero_demo/micro_mall/gate/internal/logic"
 	"future-go/go-zero_demo/micro_mall/gate/internal/svc"
 	"future-go/go-zero_demo/micro_mall/gate/internal/types"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
@@ -17,7 +18,7 @@ func GetUserHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := logic.NewGetUserLogic(r.Context(), svcCtx)
+		l := logic.NewUserLogic(r.Context(), svcCtx)
 		resp, err := l.GetUser(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

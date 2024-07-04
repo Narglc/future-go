@@ -13,3 +13,6 @@ type Config struct {
 		AccessExpire int64
 	}
 }
+
+// 先登录，获取Token
+// 前端会存储token， 下一次亲够在header中携带token

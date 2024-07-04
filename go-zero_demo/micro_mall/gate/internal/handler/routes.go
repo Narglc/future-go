@@ -27,11 +27,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/register",
 				Handler: RegisterHandler(serverCtx),
 			},
+		},
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
 			{
 				Method:  http.MethodGet,
 				Path:    "/user/get/:id",
 				Handler: GetUserHandler(serverCtx),
 			},
 		},
+		// 相应接口添加jwt鉴权
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 }
