@@ -11,6 +11,7 @@ import (
 	"future-go/go-zero_demo/micro_mall/user/types/user"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/zeromicro/go-zero/core/logc"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -33,7 +34,8 @@ func (l *UserLogic) GetUser(req *types.IdRequest) (resp *types.UserResponse, err
 
 	// 认证通过后，可从token中获取用于id userid， 框架会将其保存在 ctx 上下文中
 	userId := l.ctx.Value("userId")
-	logx.Infof("获取的token内容:%s \n", userId)
+	// logc 相对 logx 增加了 trace 信息，使用上第一个参数要传入 ctx
+	logc.Infof(l.ctx, "获取的token内容:%s \n", userId)
 
 	// 自定义错误
 	if req.Id == "1" {

@@ -10,8 +10,10 @@ import (
 	"future-go/go-zero_demo/micro_mall/gate/internal/errorx"
 	"future-go/go-zero_demo/micro_mall/gate/internal/handler"
 	"future-go/go-zero_demo/micro_mall/gate/internal/svc"
+	"future-go/go-zero_demo/micro_mall/gate/zapx"
 
 	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
@@ -40,6 +42,11 @@ func main() {
 			return http.StatusInternalServerError, nil
 		}
 	})
+
+	// 使用第三方的日志包 zap
+	writer, err := zapx.NewZapWriter()
+	logx.Must(err)
+	logx.SetWriter(writer)
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
