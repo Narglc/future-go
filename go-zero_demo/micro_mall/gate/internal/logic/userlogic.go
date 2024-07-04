@@ -64,6 +64,8 @@ func (l *UserLogic) getToken(secretKey string, iat, seconds, userId int64) (stri
 
 func (l *UserLogic) Login(req *types.UserLoginReq) (resp *types.UserLoginRsp, err error) {
 	// todo: add your logic here and delete this line
+	logx.Infof("执行 Login 业务处理")
+
 	userId := 100
 	auth := l.svcCtx.Config.Auth
 	token, err := l.getToken(auth.AccessSecret, time.Now().Unix(), auth.AccessExpire, int64(userId))
@@ -78,6 +80,7 @@ func (l *UserLogic) Login(req *types.UserLoginReq) (resp *types.UserLoginRsp, er
 
 func (l *UserLogic) Register(req *types.UserRegisterReq) (resp *types.UserRegisterRsp, err error) {
 	// todo: add your logic here and delete this line
+	logx.Infof("执行 Register 业务处理")
 
 	// 超时上下文控制,10ms会超时
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Millisecond)

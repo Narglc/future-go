@@ -42,12 +42,16 @@ type UserLoginRsp {
 
 @server (
 	jwt: Auth
+// middleware: User // 路由中间件声明此处不使用
 )
 service gate-api {
 	@handler GetUserHandler
 	get /user/get/:id (IdRequest) returns (UserResponse)
 }
 
+@server (
+	middleware: User // 路由中间件声明
+)
 service gate-api {
 	@handler GateTestHandler
 	get /from/:name (Request) returns (Response)

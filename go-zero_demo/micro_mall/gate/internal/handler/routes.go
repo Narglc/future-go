@@ -10,25 +10,8 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
-	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/from/:name",
-				Handler: GateTestHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/login",
-				Handler: LoginHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/register",
-				Handler: RegisterHandler(serverCtx),
-			},
-		},
-	)
+	// 全局中间件调用
+	server.Use(serverCtx.UserMiddleware.GlobalHandle)
 
 	server.AddRoutes(
 		[]rest.Route{
@@ -40,5 +23,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		// 相应接口添加jwt鉴权
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		// 使用路由中间件
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.UserMiddleware.RegAndLoginHandle},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/from/:name",
+					Handler: GateTestHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/login",
+					Handler: LoginHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/register",
+					Handler: RegisterHandler(serverCtx),
+				},
+			}...,
+		),
 	)
 }
