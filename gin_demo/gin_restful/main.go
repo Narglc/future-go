@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,12 +18,27 @@ import (
 - 用DELETE请求来删除数据
 */
 
-//函数会返回状态码是200，JSON格式的数据key是message，value是"Hello Golang"
+// 函数会返回状态码是200，JSON格式的数据key是message，value是"Hello Golang"
 // http.StatusOK == 200
 func sayHello(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Hello Golang~",
 	})
+}
+
+// 定义中间件: 打印每个接口的请求时间
+func Logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 开始时间
+		t := time.Now()
+
+		// 处理请求
+		c.Next()
+
+		// 计算处理时间
+		latency := time.Since(t)
+		log.Printf("Latency: %v", latency)
+	}
 }
 
 func main() {
@@ -34,6 +51,13 @@ func main() {
 
 	// 用户发送GET请求的时候，会触发sayHello函数
 	router.GET("/hello", sayHello)
+
+	// 应用中间件到特定路由
+	router.GET("/ping", Logger(), func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
 
 	// GET/POST/PUT/DELETE四种方法简单测试
 	{
@@ -74,6 +98,7 @@ func main() {
 	v1 := router.Group("/api/v1/userinfo")
 	// 创建五个routes
 	{
+		v1.Use(Logger()) // 应用中间件到路由组
 		v1.POST("/", CreateUser)
 		v1.GET("/", FetchAllUsers)
 		v1.GET("/:id", FetchSingleUser)
