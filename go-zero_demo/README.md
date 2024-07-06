@@ -1,6 +1,68 @@
 # 学习笔记
 
-[ B站码神之路::go-zero](https://www.mszlu.com/go/go-zero/02/02.html#_1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)
+## 总结:
+
+### Quickstart
+```bash
+mkdir quickstart && cd quickstart
+
+# 快速生成 HTTP 单体服务并启动
+goctl quickstart --service-type mono
+
+# 快速生成 RPC 微服务并启动，外部包含了一个HTTP服务方便测试
+goctl quickstart --service-type micro
+```
+
+### HTTP 服务
+```bash
+# 1.生成新项目
+goctl api new order
+
+# 2.修改根目录下的order.api文件，增加需要的HTTP接口
+
+# 3. 重新生成
+goctl api go -api order.api -dir ./
+goctl api go -api order.api -dir ./ -style go_zero      # -style定义了生成文件的命名规则
+
+# 4. 修改 order/internal/logic文件中的接口实现逻辑
+
+# 5. 如果需要使用中间件，请在order/internal/handler/routes.go的RegisterHandlers中修改
+```
+
+#### HTTP api请求支持参数校验
+```go
+type createRequest {
+    token string `header:"authorization"`
+    name    string  `path:"name"`
+    age     int     `form:"age,default=18,range=[18:100)"`
+    role    string  `json:"role,options=teacher|parent"`
+    address string  `json:"address,optional"`
+    from    string  `path:"from,options=you|me"`            // 路由参数
+}
+```
+
+### RPC 服务
+```bash
+# 1. 创建项目目录
+mkdir -p demo/rpc
+
+# 2. 在rpc目录下创建模版proto文件
+goctl rpc -o=demo.proto
+
+# 3. 在项目demo根目录下创建工程，根据demo.proto [如果有问题尝试 go work use demo]
+goctl rpc protoc rpc/demo.proto --go_out=./pb --go-grpc_out=./pb --zrpc_out=.
+
+# 4. 在demo/internal/logic中实现rpc接口逻辑，如果需要什么信息，可将其添加到internal/svc/servicecontext.go的ServiceContext中
+# 增加其他rpc_clt也是在这里添加
+
+# 5. 在demo.proto增加新接口，同步3.4过程
+```
+-----
+
+[ B站码神之路::go-zero ](https://www.mszlu.com/go/go-zero/02/02.html#_1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)
+[ zero-example ](https://github.com/zeromicro/zero-examples) 其中的**bookstore** 使用很规范，可参考(1HTTP+2RPC+1DB)；**shorturl**也可参考
+[Go 服务自动收集线上问题现场](https://juejin.cn/post/7171949320709603342) 线上开启/关闭pprof,定位问题
+
 
 ## goctl 安装
 
@@ -237,3 +299,7 @@ func (l *UserLogic) GetUser(req *types.IdRequest) (resp *types.UserResponse, err
 ```
 {app='user-rpc'}
 ```
+
+
+### goctl 命令列表
+![goctl命令列表](goctl_help.png)
