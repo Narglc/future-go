@@ -3,6 +3,7 @@ package timeoutctx
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -13,7 +14,9 @@ import (
 // https://juejin.cn/post/6944855637981397029
 
 func hardWork(job interface{}) error {
-	time.Sleep(time.Minute)
+	fmt.Println("start hardwork...")
+	time.Sleep(10 * time.Second)
+	fmt.Println("end hardwork...")
 	return nil
 }
 
@@ -21,14 +24,17 @@ func requestWork(ctx context.Context, job interface{}) error {
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 
-	done := make(chan error)
+	done := make(chan error, 2) // 此处设置缓冲/非缓冲差别很大： 缓冲无goroutine泄漏，非缓冲有goroutine泄漏
 
 	go func() {
+		fmt.Println("before go hardwork...")
 		done <- hardWork(job)
+		fmt.Println("after go hardwork...")
 	}()
 
 	select {
 	case err := <-done:
+		fmt.Printf("got here...\n")
 		return err
 	case <-ctx.Done():
 		return ctx.Err()
@@ -37,7 +43,7 @@ func requestWork(ctx context.Context, job interface{}) error {
 
 // 运行: go test timeoutctx_test.go -v
 func TestMain(t *testing.T) {
-	const total = 1000
+	const total = 10
 	var wg sync.WaitGroup
 	wg.Add(total)
 	now := time.Now()
@@ -50,5 +56,7 @@ func TestMain(t *testing.T) {
 	}
 	wg.Wait()
 
-	fmt.Println("elapsed:", time.Since(now))
+	fmt.Println("elapsed:", time.Since(now)) // elapsed: 2.005725931s
+	time.Sleep(time.Second * 20)
+	fmt.Println("number of goroutines:", runtime.NumGoroutine()) // number of goroutines: 1002
 }
